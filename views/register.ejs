@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FinanceOS — Register</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0a0f; --surface: #111118; --surface2: #1a1a24;
+      --border: #2a2a3a; --accent: #6c63ff; --accent2: #a78bfa;
+      --green: #10b981; --text: #e2e8f0; --muted: #64748b;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+    .bg-grid { position: fixed; inset: 0; z-index: 0; background-image: linear-gradient(rgba(108,99,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(108,99,255,0.03) 1px, transparent 1px); background-size: 40px 40px; }
+    .glow { position: fixed; width: 600px; height: 600px; border-radius: 50%; background: radial-gradient(circle, rgba(108,99,255,0.12) 0%, transparent 70%); top: -200px; right: -200px; pointer-events: none; }
+    .card { position: relative; z-index: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 48px 40px; width: 100%; max-width: 420px; box-shadow: 0 25px 60px rgba(0,0,0,0.5); }
+    .logo { display: flex; align-items: center; gap: 10px; margin-bottom: 32px; }
+    .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .logo-text { font-size: 20px; font-weight: 700; }
+    .logo-text span { color: var(--accent2); }
+    h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+    .subtitle { color: var(--muted); font-size: 14px; margin-bottom: 32px; }
+    .form-group { margin-bottom: 18px; }
+    label { display: block; font-size: 13px; font-weight: 500; color: var(--muted); margin-bottom: 8px; }
+    input, select { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; color: var(--text); font-size: 14px; font-family: 'Inter', sans-serif; transition: border-color 0.2s, box-shadow 0.2s; outline: none; }
+    input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(108,99,255,0.15); }
+    input::placeholder { color: var(--muted); }
+    select option { background: var(--surface2); }
+    .btn { width: 100%; background: linear-gradient(135deg, var(--accent), #8b5cf6); border: none; border-radius: 10px; padding: 13px; color: #fff; font-size: 15px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: opacity 0.2s; margin-top: 8px; }
+    .btn:hover { opacity: 0.9; }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .error-msg { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #fca5a5; margin-bottom: 20px; display: none; }
+    .success-msg { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #6ee7b7; margin-bottom: 20px; display: none; }
+    .footer-link { text-align: center; margin-top: 24px; font-size: 13px; color: var(--muted); }
+    .footer-link a { color: var(--accent2); text-decoration: none; font-weight: 500; }
+    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 6px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="glow"></div>
+
+  <div class="card">
+    <div class="logo">
+      <div class="logo-icon">💹</div>
+      <div class="logo-text">Finance<span>OS</span></div>
+    </div>
+
+    <h1>Create account</h1>
+    <p class="subtitle">Join the finance dashboard</p>
+
+    <div class="error-msg" id="errorMsg"></div>
+    <div class="success-msg" id="successMsg"></div>
+
+    <form id="registerForm">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="name" placeholder="John Doe" required/>
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="email" placeholder="you@example.com" required/>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="password" placeholder="Min. 6 characters" required minlength="6"/>
+      </div>
+      <div class="form-group">
+        <label>Role</label>
+        <select id="role">
+          <option value="viewer">Viewer — Read only access</option>
+          <option value="analyst">Analyst — Can create & edit records</option>
+          <option value="admin">Admin — Full access</option>
+        </select>
+      </div>
+      <button type="submit" class="btn" id="submitBtn">Create Account</button>
+    </form>
+
+    <div class="footer-link">
+      Already have an account? <a href="/login">Sign in</a>
+    </div>
+  </div>
+
+  <script>
+    if (localStorage.getItem('token')) window.location.href = '/dashboard';
+
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submitBtn');
+      const errEl = document.getElementById('errorMsg');
+      const sucEl = document.getElementById('successMsg');
+      errEl.style.display = 'none';
+      sucEl.style.display = 'none';
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>Creating account...';
+
+      try {
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            password: document.getElementById('password').value,
+            role: document.getElementById('role').value,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Registration failed');
+        sucEl.textContent = 'Account created! Redirecting to login...';
+        sucEl.style.display = 'block';
+        setTimeout(() => window.location.href = '/login', 1500);
+      } catch (err) {
+        errEl.textContent = err.message;
+        errEl.style.display = 'block';
+        btn.disabled = false;
+        btn.innerHTML = 'Create Account';
+      }
+    });
+  </script>
+</body>
+</html>
