@@ -1,4 +1,3 @@
-require("dotenv").config();
 const bcrypt = require("bcryptjs");
 const { db, init } = require("./src/db");
 
