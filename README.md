@@ -1,90 +1,79 @@
-# FinanceOS — Finance Data Processing & Access Control Backend
+# FinanceOS
 
-A full-stack finance dashboard with role-based access control, built with Node.js, Express, SQLite, and a server-rendered UI.
+A backend system for managing financial records with role-based access control, built as part of a backend engineering assignment.
+
+The idea was simple — build something that actually works like a real finance dashboard would, not just a bunch of CRUD endpoints thrown together. So I added proper auth, role-based permissions, analytics APIs, and a lightweight UI so you can see it running without needing Postman.
 
 ---
 
-## Quick Start
+## Getting Started
 
 ```bash
-# 1. Install dependencies
 npm install
-
-# 2. Seed demo data (creates 3 users + 42 sample records)
-node seed.js
-
-# 3. Start the server
 node server.js
-
-# 4. Open in browser
-http://localhost:3000/login
 ```
 
-### Demo Credentials
+That's it. The server auto-seeds demo data on first run.
 
-| Role    | Email                  | Password    | Access                          |
-|---------|------------------------|-------------|---------------------------------|
-| Admin   | admin@finance.com      | admin123    | Full access — users + records   |
-| Analyst | analyst@finance.com    | analyst123  | Create/edit own records         |
-| Viewer  | viewer@finance.com     | viewer123   | Read-only dashboard             |
+Then open: **http://localhost:3000/login**
 
 ---
 
-## Tech Stack
+## Demo Accounts
 
-| Layer      | Choice         | Why                                                        |
-|------------|----------------|------------------------------------------------------------|
-| Runtime    | Node.js        | Fast, non-blocking I/O — ideal for API servers             |
-| Framework  | Express.js     | Minimal, flexible, widely understood                       |
-| Database   | SQLite         | Zero-config, file-based, perfect for self-contained demos  |
-| Auth       | JWT            | Stateless, no session store needed                         |
-| UI         | EJS + Vanilla JS | Single server, no build step, evaluator runs one command |
-| Charts     | Chart.js CDN   | Lightweight, no npm install needed                         |
+| Role    | Email                  | Password    |
+|---------|------------------------|-------------|
+| Admin   | admin@finance.com      | admin123    |
+| Analyst | analyst@finance.com    | analyst123  |
+| Viewer  | viewer@finance.com     | viewer123   |
+
+Each role has different permissions — worth logging in with all three to see the difference.
 
 ---
 
-## Project Structure
+## What's Inside
 
 ```
 ├── src/
 │   ├── middleware/
 │   │   ├── auth.js        # JWT verification + role guard
-│   │   └── validate.js    # Required field validation
+│   │   └── validate.js    # Request body validation
 │   ├── routes/
-│   │   ├── auth.js        # POST /register, POST /login
-│   │   ├── users.js       # User CRUD (admin only)
+│   │   ├── auth.js        # Register + Login
+│   │   ├── users.js       # User management (admin only)
 │   │   ├── records.js     # Financial records CRUD
-│   │   └── dashboard.js   # Analytics & summary APIs
-│   ├── app.js             # Express app setup
-│   └── db.js              # SQLite connection + schema
-├── views/
-│   ├── login.ejs          # Login page
-│   ├── register.ejs       # Register page
-│   └── app.ejs            # Main app shell (SPA-style)
-├── public/
-│   ├── css/app.css        # Dark premium theme
-│   └── js/app.js          # Frontend logic (routing, API calls, charts)
-├── server.js              # Entry point
-├── seed.js                # Demo data seeder
-└── .env                   # Environment config
+│   │   └── dashboard.js   # Analytics + summary APIs
+│   ├── app.js             # Express setup
+│   └── db.js              # SQLite + schema
+├── views/                 # EJS templates (login, register, dashboard)
+├── public/                # CSS + frontend JS
+├── seed.js                # Auto-runs on first startup
+└── server.js              # Entry point
 ```
+
+---
+
+## Tech Stack
+
+- **Node.js + Express** — straightforward, no unnecessary complexity
+- **SQLite** — zero config, file-based, perfect for a self-contained project. Schema is written the same way I'd write it for PostgreSQL
+- **JWT** — stateless auth, no session store needed
+- **EJS + Vanilla JS** — single server serves everything, no separate frontend build step needed
 
 ---
 
 ## Role Permissions
 
-| Action                    | Viewer | Analyst | Admin |
-|---------------------------|--------|---------|-------|
-| View dashboard            | ✅     | ✅      | ✅    |
-| View records              | ✅     | ✅      | ✅    |
-| Create records            | ❌     | ✅      | ✅    |
-| Edit own records          | ❌     | ✅      | ✅    |
-| Edit any record           | ❌     | ❌      | ✅    |
-| Delete own records        | ❌     | ✅      | ✅    |
-| Delete any record         | ❌     | ❌      | ✅    |
-| View all users            | ❌     | ❌      | ✅    |
-| Change user roles/status  | ❌     | ❌      | ✅    |
-| Delete users              | ❌     | ❌      | ✅    |
+| Action                  | Viewer | Analyst | Admin |
+|-------------------------|--------|---------|-------|
+| View dashboard          | Yes    | Yes     | Yes    |
+| View records            | Yes    | Yes     | Yes    |
+| Create records          | NO     | Yes     | Yes    |
+| Edit own records        | NO     | Yes     | Yes    |
+| Edit any record         | NO     | NO      | Yes    |
+| Delete own records      | NO     | Yes     | Yes    |
+| Delete any record       | NO     | NO      | Yes    |
+| Manage users            | No     | NO      | Yes    |
 
 ---
 
@@ -92,60 +81,57 @@ http://localhost:3000/login
 
 ### Auth
 ```
-POST /api/auth/register   Body: { name, email, password, role? }
-POST /api/auth/login      Body: { email, password }
+POST /api/auth/register   { name, email, password, role? }
+POST /api/auth/login      { email, password }
 ```
 
 ### Records
 ```
-GET    /api/records              Query: type, category, from, to, page, limit
+GET    /api/records              ?type, category, from, to, page, limit
 GET    /api/records/:id
-POST   /api/records              Body: { amount, type, category, date, notes? }
-PUT    /api/records/:id          Body: any subset of above
-DELETE /api/records/:id          Soft delete
+POST   /api/records              { amount, type, category, date, notes? }
+PUT    /api/records/:id
+DELETE /api/records/:id
 ```
 
 ### Dashboard
 ```
-GET /api/dashboard/summary         Query: from?, to?
-GET /api/dashboard/by-category     Query: type?, from?, to?
-GET /api/dashboard/monthly-trends  Query: year?
+GET /api/dashboard/summary
+GET /api/dashboard/by-category
+GET /api/dashboard/monthly-trends
 GET /api/dashboard/weekly-trends
-GET /api/dashboard/recent          Query: limit?
+GET /api/dashboard/recent
 ```
 
 ### Users (Admin only)
 ```
-GET    /api/users           Query: role?, status?, page, limit
+GET    /api/users
 GET    /api/users/me
 GET    /api/users/:id
-PATCH  /api/users/:id       Body: { name?, role?, status? }
+PATCH  /api/users/:id     { name?, role?, status? }
 DELETE /api/users/:id
 ```
 
-All protected routes require: `Authorization: Bearer <token>`
+All protected routes need: `Authorization: Bearer <token>`
 
 ---
 
-## Design Decisions & Assumptions
-
-**SQLite over PostgreSQL/MongoDB**
-Chosen for zero-config setup. The evaluator runs `node seed.js && node server.js` — no database server to install or configure. The schema and query patterns are identical to what would be used in PostgreSQL.
-
-**Server-rendered UI over React/MERN**
-A single `node server.js` command starts everything. No separate frontend server, no `npm install` in two directories, no CORS configuration for the evaluator to worry about. The UI is a lightweight SPA-style app using vanilla JS with Chart.js for visualizations.
+## A Few Decisions Worth Mentioning
 
 **Soft delete on records**
-Records are never permanently deleted — `deleted_at` timestamp is set instead. This preserves data integrity and audit history, which is critical in financial systems.
+Financial data shouldn't just disappear. Setting `deleted_at` instead of actually deleting keeps the audit trail intact — which matters in any real finance system.
 
-**JWT stored in localStorage**
-Acceptable for a demo/assessment context. In production, HttpOnly cookies would be preferred to prevent XSS token theft.
+**Analyst ownership rule**
+Analysts can only edit or delete records they created themselves. This felt like the right business rule — you shouldn't be able to modify someone else's entries without admin-level trust.
 
-**Rate limiting on auth endpoints**
-Login and register are limited to 20 requests per 15 minutes per IP. This prevents brute-force attacks — a basic but important security measure.
+**Single server for UI + API**
+I could've built a separate React frontend, but that would mean two servers, two `npm install` commands, and CORS config to worry about. Keeping everything in one Express server felt cleaner for this context.
 
-**Analyst can only edit/delete their own records**
-This is a deliberate business rule. Analysts are trusted to manage their own entries but should not be able to modify records created by others without admin oversight.
+**Rate limiting on auth**
+Login and register are capped at 20 requests per 15 minutes. Small thing, but it shows awareness of basic security — brute force on login endpoints is a real concern.
+
+**JWT in localStorage**
+Fine for a demo. In production I'd use HttpOnly cookies to avoid XSS exposure.
 
 ---
 
@@ -153,6 +139,8 @@ This is a deliberate business rule. Analysts are trusted to manage their own ent
 
 ```env
 PORT=3000
-JWT_SECRET=your_secret_key
+JWT_SECRET=your_secret_here
 JWT_EXPIRES_IN=7d
 ```
+
+Copy `.env.example` to `.env` and update the values.
