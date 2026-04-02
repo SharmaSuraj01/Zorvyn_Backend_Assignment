@@ -1,7 +1,5 @@
-/**
- * Validates that required fields are present and non-empty in req.body.
- * Usage: validate("field1", "field2")
- */
+// just checks that required fields exist and aren't empty
+// keeps the route handlers cleaner
 const validate = (...fields) => (req, res, next) => {
   const missing = fields.filter(
     (f) => req.body[f] === undefined || req.body[f] === null || req.body[f] === ""

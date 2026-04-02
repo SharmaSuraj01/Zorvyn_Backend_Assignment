@@ -2,6 +2,7 @@ const router = require("express").Router();
 const { db } = require("../db");
 const { authenticate, authorize } = require("../middleware/auth");
 
+// strips password before sending user data out
 const safeUser = (u) => ({ id: u.id, name: u.name, email: u.email, role: u.role, status: u.status, created_at: u.created_at });
 
 // GET /api/users — admin only

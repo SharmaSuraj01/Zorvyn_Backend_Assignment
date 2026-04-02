@@ -4,7 +4,8 @@ const path = require("path");
 const dbPath = path.join(__dirname, "../finance.db");
 const raw = new sqlite3.Database(dbPath);
 
-// Promisified helpers that mimic better-sqlite3's sync API style
+// sqlite3 is callback-based by default, so wrapping in promises
+// to keep the route handlers clean with async/await
 const db = {
   run: (sql, params = []) =>
     new Promise((resolve, reject) =>

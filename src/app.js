@@ -15,11 +15,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "../public")));
 
-// View engine
+// View engine — EJS keeps things simple, no separate frontend build needed
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "../views"));
 
-// Rate limiting on auth endpoints
+// cap login/register to avoid brute force — 20 req per 15 min felt reasonable
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 20,

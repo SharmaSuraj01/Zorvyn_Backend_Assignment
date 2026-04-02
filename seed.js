@@ -5,7 +5,7 @@ const { db, init } = require("./src/db");
 const seed = async () => {
   await init;
 
-  // Skip if already seeded
+  // don't re-seed if data already exists
   const existing = await db.get("SELECT id FROM users LIMIT 1");
   if (existing) return;
 
