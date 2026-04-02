@@ -133,15 +133,47 @@
     .footer-link a { color: var(--accent2); text-decoration: none; font-weight: 500; }
     .footer-link a:hover { text-decoration: underline; }
     .demo-hint {
-      background: rgba(108,99,255,0.08);
+      background: rgba(108,99,255,0.06);
       border: 1px solid rgba(108,99,255,0.2);
-      border-radius: 8px;
-      padding: 10px 14px;
-      font-size: 12px;
-      color: var(--accent2);
+      border-radius: 10px;
+      padding: 12px 14px;
       margin-bottom: 24px;
-      line-height: 1.6;
     }
+    .demo-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent2);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+    .demo-accounts { display: flex; flex-direction: column; gap: 6px; }
+    .demo-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 10px;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .demo-row:hover { background: rgba(108,99,255,0.1); }
+    .demo-role {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      min-width: 58px;
+      text-align: center;
+    }
+    .demo-role.admin   { background: rgba(108,99,255,0.2); color: #a78bfa; }
+    .demo-role.analyst { background: rgba(59,130,246,0.2);  color: #60a5fa; }
+    .demo-role.viewer  { background: rgba(100,116,139,0.2); color: #94a3b8; }
+    .demo-creds { font-size: 12px; color: var(--muted); flex: 1; }
+    .demo-use { font-size: 11px; color: var(--accent2); opacity: 0; transition: opacity 0.15s; }
+    .demo-row:hover .demo-use { opacity: 1; }
     .spinner {
       display: inline-block;
       width: 16px; height: 16px;
@@ -169,6 +201,27 @@
     <h1>Welcome back</h1>
     <p class="subtitle">Sign in to your finance dashboard</p>
 
+    <div class="demo-hint">
+      <div class="demo-title">Demo Accounts</div>
+      <div class="demo-accounts">
+        <div class="demo-row" onclick="fillLogin('admin@finance.com','admin123')">
+          <span class="demo-role admin">Admin</span>
+          <span class="demo-creds">admin@finance.com / admin123</span>
+          <span class="demo-use">Use →</span>
+        </div>
+        <div class="demo-row" onclick="fillLogin('analyst@finance.com','analyst123')">
+          <span class="demo-role analyst">Analyst</span>
+          <span class="demo-creds">analyst@finance.com / analyst123</span>
+          <span class="demo-use">Use →</span>
+        </div>
+        <div class="demo-row" onclick="fillLogin('viewer@finance.com','viewer123')">
+          <span class="demo-role viewer">Viewer</span>
+          <span class="demo-creds">viewer@finance.com / viewer123</span>
+          <span class="demo-use">Use →</span>
+        </div>
+      </div>
+    </div>
+
     <div class="error-msg" id="errorMsg"></div>
 
     <form id="loginForm">
@@ -191,6 +244,11 @@
   <script>
     // Redirect if already logged in
     if (localStorage.getItem('token')) window.location.href = '/dashboard';
+
+    function fillLogin(email, password) {
+      document.getElementById('email').value = email;
+      document.getElementById('password').value = password;
+    }
 
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
