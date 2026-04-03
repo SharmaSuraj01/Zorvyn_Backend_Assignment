@@ -17,6 +17,13 @@ router.post("/register", validate("name", "email", "password"), async (req, res,
     const existing = await db.get("SELECT id FROM users WHERE email = ?", [email.toLowerCase().trim()]);
     if (existing) return res.status(409).json({ error: "Email is already registered" });
 
+    if (password.length < 6) {
+      return res.status(400).json({ error: "Password must be at least 6 characters" });
+    }
+    if (!/[a-zA-Z]/.test(password) || !/[0-9]/.test(password)) {
+      return res.status(400).json({ error: "Password must contain at least one letter and one number" });
+    }
+
     const hashed = bcrypt.hashSync(password, 10);
     const result = await db.run(
       "INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)",

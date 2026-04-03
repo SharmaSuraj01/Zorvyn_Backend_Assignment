@@ -43,6 +43,22 @@ describe("POST /api/auth/register", () => {
     expect(res.body).toHaveProperty("error");
   });
 
+  it("rejects weak password — too short", async () => {
+    const res = await request(app).post("/api/auth/register").send({
+      name: "Weak Pass", email: "weak@example.com", password: "abc",
+    });
+    expect(res.status).toBe(400);
+    expect(res.body.error).toMatch(/6 characters/i);
+  });
+
+  it("rejects password with no numbers", async () => {
+    const res = await request(app).post("/api/auth/register").send({
+      name: "No Num", email: "nonum@example.com", password: "abcdefgh",
+    });
+    expect(res.status).toBe(400);
+    expect(res.body.error).toMatch(/letter and one number/i);
+  });
+
   it("rejects invalid role", async () => {
     const res = await request(app).post("/api/auth/register").send({
       name: "Bad Role",
@@ -60,7 +76,7 @@ describe("POST /api/auth/login", () => {
     await request(app).post("/api/auth/register").send({
       name: "Login Test",
       email: "logintest@example.com",
-      password: "mypassword",
+      password: "mypass123",
       role: "viewer",
     });
   });
@@ -68,7 +84,7 @@ describe("POST /api/auth/login", () => {
   it("logs in with correct credentials", async () => {
     const res = await request(app).post("/api/auth/login").send({
       email: "logintest@example.com",
-      password: "mypassword",
+      password: "mypass123",
     });
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty("token");
